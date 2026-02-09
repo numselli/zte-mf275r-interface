@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Router Control Panel</title>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f9; }
+      h1 { color: #333; }
+      button { padding: 10px 20px; margin: 10px 0; cursor: pointer; }
+      pre { background: #eee; padding: 10px; overflow-x: auto; }
+      .row {display: grid;grid-template-columns: 250px 1fr;padding: 8px 0;border-bottom: 1px solid #eee;}
+      .key {font-weight: bold;color: #333;word-break: break-word;}
+      .value {color: #555;word-break: break-word;}
+    </style>
+  </head>
+  <body>
+    <h1>Router Control Panel</h1>
+
+    <div>
+      <button id="refreshStatus">Refresh Status</button>
+      <button id="rebootRouter">Reboot Router</button>
+    </div>
+    <div>
+      <h2>Reboot Output:</h2>
+      <pre id="rebootOutput"></pre>
+    </div>
+
+    <div>
+      <h2>Status:</h2>
+      <div id="statusOutput">Loading…</div>
+    </div>
+
+    <script>
+      const statusOutput = document.getElementById('statusOutput');
+      const rebootOutput = document.getElementById('rebootOutput');
+
+      async function fetchStatus() {
+        statusOutput.textContent = 'Loading...';
+        try {
+          const res = await fetch('/api/status');
+          const data = await res.json();
+
+          const output = document.getElementById("statusOutput");
+          output.innerHTML = "";
+
+          Object.entries(data).forEach(([key, value]) => {
+            const row = document.createElement("div");
+            row.className = "row";
+            row.innerHTML = `<div class="key">${key.replace(/_/g, " ")}</div><div class="value">${value || "-"}</div>`;
+            output.appendChild(row);
+          });
+        } catch (err) {
+          statusOutput.textContent = 'Error fetching status: ' + err;
+        }
+      }
+
+      async function rebootRouter() {
+        rebootOutput.textContent = 'Sending reboot command...';
+        try {
+          const res = await fetch('/api/reboot', { method: 'POST' });
+          const data = await res.json();
+          rebootOutput.textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+          rebootOutput.textContent = 'Error sending reboot: ' + err;
+        }
+      }
+
+      document.getElementById('refreshStatus').addEventListener('click', fetchStatus);
+      document.getElementById('rebootRouter').addEventListener('click', rebootRouter);
+
+      fetchStatus();
+    </script>
+  </body>
+</html>
