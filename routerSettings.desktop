@@ -1,0 +1,14 @@
+[Desktop Entry]
+Comment[en_US]=routerSettings
+Comment=routerSettings
+Exec=kde-open http://localhost:8099
+GenericName[en_US]=routerSettings
+GenericName=routerSettings
+Name[en_US]=routerSettings
+Name=routerSettings
+Icon=internet-web-browser
+NoDisplay=false
+PrefersNonDefaultGPU=false
+StartupNotify=true
+Terminal=false
+Type=Application
